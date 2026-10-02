@@ -1,0 +1,12 @@
+{
+    "issues": [
+        {"id": "edited-shipped", "file": "2025_01_10_100100_create_orders_table.php", "issue": "Edits a migration that has already shipped (committed on main, tagged v1.0.0) to add orders.currency; databases that already ran it never get the column. Needs a new migration instead."},
+        {"id": "not-null-no-default", "file": "2025_06_02_090000_add_phone_to_customers_table.php", "issue": "Adds a NOT NULL phone column with no default to the existing customers table: fails on tables with rows (and always on SQLite), and the running release's inserts don't set it."},
+        {"id": "in-place-rename", "file": "2025_06_02_090100_rename_name_to_full_name_on_customers_table.php", "issue": "Renames customers.name in place while the code (Customer model, CustomerDirectory, factory) still uses name; breaks the running release. Needs add-copy-drop across releases."},
+        {"id": "drop-used-column", "file": "2025_06_02_090200_drop_notes_from_orders_table.php", "issue": "Drops orders.notes while the code (Order::$fillable, CustomerDirectory::packingSlip) still uses it; loses data and breaks the running release."},
+        {"id": "empty-down", "file": "2025_06_02_090200_drop_notes_from_orders_table.php", "issue": "down() is empty, so a rollback reports success without restoring the column (it should re-add notes or throw because the data is gone)."},
+        {"id": "model-in-migration", "file": "2025_06_02_090300_archive_old_orders.php", "issue": "Uses the Eloquent Order model (and loads every matching row with get()) inside a migration; should use the query builder, batched."},
+        {"id": "change-drops-nullable", "file": "2025_06_02_090400_widen_country_on_customers_table.php", "issue": "change() without restating nullable() makes country NOT NULL on Laravel 11+, which fails or breaks writes because existing rows and the code have NULL countries."}
+    ],
+    "clean": ["2025_06_02_090500_add_channel_to_orders_table.php"]
+}

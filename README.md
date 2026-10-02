@@ -84,6 +84,7 @@ skills/
     ├── SKILL.md
     └── rules/           # identical copy, CI-checked
 scripts/build-skills.sh  # packages dist/*.skill for claude.ai
+evals/                   # with/without comparison on a scratch Laravel app
 ```
 
 `rules/` exists in both skills so each can be installed alone. CI (`.github/workflows/check-rules.yml`) fails if the copies differ. Check locally with:
@@ -96,7 +97,11 @@ diff -r skills/write-migration/rules skills/review-migration/rules
 
 First version. Every API, option and behaviour the rules name was checked against the source of laravel/framework 10.50, 11.57, 12.69 and 13.34 (version boundaries bisected against `illuminate/database` releases), doctrine/migrations 3.9.7, doctrine/doctrine-migrations-bundle 4.0.1, doctrine/dbal 4.5.0 and doctrine/orm 3.7.3. Behaviour claims marked "tested" were run against SQLite 3.53 and a throwaway MySQL 8.4.6. MySQL and PostgreSQL locking facts come from the MySQL 8.4 Reference Manual and the PostgreSQL 18 (and 12) documentation, cited where used. PostgreSQL behaviour wasn't run against a server.
 
-There's no eval yet. One could work like the [php-unit-tests-skills](https://github.com/gkwelding/php-unit-tests-skills) evals: a set of Laravel and Symfony fixture apps with seeded tables, a list of change requests (make a column required, rename a column, add an index to a large table, drop a legacy column) and broken migrations to review. Run each with and without the skill, then score mechanically: the migration applies, rolls back and re-applies on MySQL and PostgreSQL; the schema matches the expected one; no data is lost on seeded rows; the old release's queries still pass against the new schema; and the review catches the planted issues. A blind side-by-side review would then judge the plans.
+The [evals](evals/README.md) run on Laravel and SQLite only so far.
+
+## Evals
+
+`evals/run.sh` runs Claude on a scratch Laravel app with and without the skills and scores the results mechanically. Write tasks (make a column required, rename a column the code uses, add a unique index over duplicates, add a foreign key over orphaned rows) are scored on whether shipped migrations stay untouched, `migrate` → `rollback` → `migrate` succeeds on a seeded SQLite copy of production, `down()` restores the schema, the data and the old release's queries survive, the tests pass and no models are used. The review task is scored on recall and false positives against an answer key of planted problems. Everything runs on SQLite inside the scratch app. See [evals/README.md](evals/README.md) for the measures, cost and the first result.
 
 ## Licence
 
