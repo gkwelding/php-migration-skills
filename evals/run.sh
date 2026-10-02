@@ -29,7 +29,9 @@ note="Any database you can reach from this checkout is a disposable copy."
 if [ ! -d "$dir/.git" ]; then
     rm -rf "$dir"
     composer create-project -n --quiet laravel/laravel "$dir"
-    (cd "$dir" && git init -q -b main)
+    # Laravel 13 skeletons ship CLAUDE.md/AGENTS.md telling agents to install Laravel Boost; a run that follows it adds ~75 files and skews the scores.
+    rm -f "$dir/CLAUDE.md" "$dir/AGENTS.md"
+    (cd "$dir" && git init -q && git config core.longpaths true -b main)
 fi
 
 # Back to the baseline: the skeleton plus the fixtures, committed on main and tagged as released,
