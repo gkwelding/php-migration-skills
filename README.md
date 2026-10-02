@@ -26,8 +26,8 @@ The skills cover what models most often get wrong about migrations: editing ones
 ### Claude Code plugin
 
 ```
-/plugin marketplace add gkwelding/php-migration-skills
-/plugin install php-migration-skills@php-migration-skills
+/plugin marketplace add gkwelding/php-unit-tests-skills
+/plugin install php-migration-skills@blackpug
 ```
 
 Commands become `/php-migration-skills:write-migration <change>` and `/php-migration-skills:review-migration [files]`.
