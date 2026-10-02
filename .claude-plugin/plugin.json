@@ -1,0 +1,24 @@
+{
+  "name": "php-migration-skills",
+  "displayName": "PHP Migration Skills",
+  "description": "Write and review database schema migrations safely in Laravel and Symfony (Doctrine Migrations): shipped migrations left alone, reversible down(), zero-downtime ordering, large-table DDL, batched backfills, verified against a disposable database.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Black Pug Ltd"
+  },
+  "license": "MIT",
+  "keywords": [
+    "php",
+    "laravel",
+    "symfony",
+    "doctrine",
+    "doctrine-migrations",
+    "migrations",
+    "database",
+    "zero-downtime",
+    "mysql",
+    "postgresql"
+  ],
+  "homepage": "https://github.com/gkwelding/php-migration-skills",
+  "repository": "https://github.com/gkwelding/php-migration-skills"
+}

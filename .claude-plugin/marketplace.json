@@ -1,0 +1,25 @@
+{
+  "name": "php-migration-skills",
+  "description": "Database migration skills for PHP projects.",
+  "owner": {
+    "name": "Black Pug Ltd"
+  },
+  "plugins": [
+    {
+      "name": "php-migration-skills",
+      "source": "./",
+      "displayName": "PHP Migration Skills",
+      "description": "Write and review Laravel and Doctrine migrations safely.",
+      "license": "MIT",
+      "category": "database",
+      "keywords": [
+        "php",
+        "laravel",
+        "symfony",
+        "doctrine",
+        "migrations"
+      ],
+      "repository": "https://github.com/gkwelding/php-migration-skills"
+    }
+  ]
+}

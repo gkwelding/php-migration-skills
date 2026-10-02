@@ -1,0 +1,13 @@
+name: Check rules
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  shared-rules-identical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: rules/ must be identical in both skills
+        run: diff -r skills/write-migration/rules skills/review-migration/rules
