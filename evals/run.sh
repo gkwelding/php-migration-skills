@@ -72,11 +72,12 @@ run_one() {
     fi
 
     echo "== $name"
-    # MSYS_NO_PATHCONV stops Git Bash on Windows rewriting "/write-migration" into a file path.
+    # Prompt on stdin: as an argument, Git Bash rewrites "/write-migration" into a file path, and MSYS_NO_PATHCONV
+    # would leak into Claude's own shell. --setting-sources project keeps user plugins and hooks out.
     # DB_PORT=1 makes a stray MySQL connection fail instead of reaching a local server.
-    (cd "$dir" && DB_PORT=1 MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*' claude -p "$prompt" ${MODEL:+--model "$MODEL"} \
+    (cd "$dir" && printf '%s' "$prompt" | DB_PORT=1 claude -p --setting-sources project ${MODEL:+--model "$MODEL"} \
         --max-budget-usd "$budget" --no-session-persistence --permission-mode acceptEdits --output-format json \
-        --allowedTools "$tools" < /dev/null > "$out.claude.json" 2> "$out.claude.err") || echo "   claude exited non-zero, see $results/$name.claude.err"
+        --allowedTools "$tools" > "$out.claude.json" 2> "$out.claude.err") || echo "   claude exited non-zero, see $results/$name.claude.err"
     (cd "$dir" && php -r '$j = json_decode((string) @file_get_contents($argv[1]), true); file_put_contents($argv[2], $j["result"] ?? "");' \
         "$out.claude.json" "$out.claude.txt")
     (cd "$dir" && git add -A && git diff --cached -- . ':!.claude' > "$out.diff" && git reset -q)
@@ -84,7 +85,7 @@ run_one() {
     if [ "$kind" = review ]; then
         # One tool-less call per report, blind to the variant.
         (cd "$dir" && php "$root/evals/match.php" prompt "$out.claude.txt" > "$out.match-prompt.txt" \
-            && claude -p --tools "" --output-format json --json-schema "$(php "$root/evals/match.php" schema)" \
+            && claude -p --tools "" --setting-sources project --output-format json --json-schema "$(php "$root/evals/match.php" schema)" \
                 --max-budget-usd "$judge_budget" --no-session-persistence ${MODEL:+--model "$MODEL"} \
                 < "$out.match-prompt.txt" > "$out.match.json" 2> "$out.match.err") || echo "   matcher failed, see $results/$name.match.err"
         echo "$id,$variant,$(cd "$dir" && php "$root/evals/match.php" score "$out.match.json"),$(cd "$dir" && stats "$out.claude.json")" >> "$results/review.csv"

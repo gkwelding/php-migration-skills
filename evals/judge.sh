@@ -51,7 +51,7 @@ EOF
     } > "$task.judge-prompt.txt"
 
     echo "== judging $task (A = $a)"
-    claude -p --tools "" --output-format json --json-schema "$schema" --max-budget-usd "$budget" \
+    claude -p --tools "" --setting-sources project --output-format json --json-schema "$schema" --max-budget-usd "$budget" \
         --no-session-persistence ${MODEL:+--model "$MODEL"} \
         < "$task.judge-prompt.txt" > "$task.judge.json" 2> "$task.judge.err" || echo "   judge failed, see $task.judge.err"
 
